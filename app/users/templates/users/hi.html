@@ -1,0 +1,42 @@
+
+{% extends "base.html" %}
+
+{% block title %}Users - Привітання{% endblock %}
+
+{% block content %}
+<div class="users-layout">
+
+    <aside class="users-sidebar">
+        <h3>Меню користувачів</h3>
+
+        <a href="{{ url_for('users.greetings', name='John', age=30) }}">
+            Greet John
+        </a>
+
+        <a href="{{ url_for('users.greetings', name='Dmytro', age=19) }}">
+            Greet Dmytro
+        </a>
+
+        <a href="{{ url_for('users.admin') }}">
+            Admin
+        </a>
+
+        <a href="{{ url_for('home') }}">
+            Homepage
+        </a>
+    </aside>
+
+    <section class="content-card user-info">
+        <h2>Hello :)</h2>
+
+        <h3>User: {{ name | upper }}</h3>
+
+        {% if age is not none %}
+            <p class="age-present">Age: {{ age }}</p>
+        {% else %}
+            <p class="age-missing">Age: Not provided</p>
+        {% endif %}
+    </section>
+
+</div>
+{% endblock %}
