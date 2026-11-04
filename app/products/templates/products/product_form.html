@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "macros/forms.html" import render_field %}
+
+{% block title %}{{ heading }}{% endblock %}
+
+{% block content %}
+<section class="content-card product-form-card">
+    <h2>{{ heading }}</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        {{ render_field(form.name) }}
+        {{ render_field(form.content, rows=5, cols=40) }}
+        {{ render_field(form.price) }}
+        {{ render_field(form.category) }}
+        {{ render_field(form.quantity) }}
+        {{ render_field(form.image) }}
+        {% if product and product.image %}
+        <p>Поточне зображення:</p>
+        <img class="product-image-preview" src="{{ url_for('products.static', filename=product.image) }}" alt="{{ product.name }}">
+        <p class="muted-text">Якщо не вибрати новий файл, попереднє зображення залишиться.</p>
+        {% endif %}
+        {{ form.submit(class="btn btn-gradient") }}
+        <a class="btn" href="{{ url_for('products.product_list') }}">Скасувати</a>
+    </form>
+</section>
+{% endblock %}

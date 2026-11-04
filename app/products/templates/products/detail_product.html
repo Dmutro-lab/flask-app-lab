@@ -1,25 +1,28 @@
-
 {% extends "base.html" %}
 
 {% block title %}{{ product.name }}{% endblock %}
 
 {% block content %}
-<section class="content-card">
-
+<section class="content-card product-detail">
     <h2>{{ product.name }}</h2>
-
+    {% if product.image %}
+    <img class="product-detail-image" src="{{ url_for('products.static', filename=product.image) }}" alt="{{ product.name }}">
+    {% else %}
+    <div class="product-image-placeholder">Зображення відсутнє</div>
+    {% endif %}
     <p><strong>ID:</strong> {{ product.id }}</p>
-
-    <p>{{ product.content }}</p>
-
-    <p class="product-price">
-        Ціна: ${{ product.price }}
-    </p>
-
-    <a class="btn"
-       href="{{ url_for('products.product_list') }}">
-        Назад до товарів
-    </a>
-
+    <p><strong>Опис:</strong> {{ product.content }}</p>
+    <p><strong>Ціна:</strong> {{ "%.2f"|format(product.price|float) }}</p>
+    <p><strong>Категорія:</strong> {{ category_names.get(product.category, product.category) }}</p>
+    <p><strong>Кількість одиниць:</strong> {{ product.quantity }}</p>
+    <p><strong>Дата створення:</strong> {{ product.created_at }}</p>
+    <div class="product-actions">
+        <a class="btn btn-gradient" href="{{ url_for('products.product_edit', product_id=product.id) }}">Редагувати</a>
+        <form method="POST" action="{{ url_for('products.product_delete', product_id=product.id) }}" onsubmit="return confirm('Видалити цей товар?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-danger" type="submit">Видалити</button>
+        </form>
+        <a class="btn" href="{{ url_for('products.product_list') }}">Назад до товарів</a>
+    </div>
 </section>
 {% endblock %}

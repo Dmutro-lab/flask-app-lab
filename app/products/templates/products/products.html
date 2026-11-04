@@ -1,31 +1,37 @@
-
 {% extends "base.html" %}
 
 {% block title %}Список товарів{% endblock %}
 
 {% block content %}
-<h2>Список товарів</h2>
-
-<div class="products-grid">
-
-    {% for product in products %}
-    <div class="content-card product-card">
-
-        <h3>{{ product.name }}</h3>
-
-        <p>{{ product.content }}</p>
-
-        <p class="product-price">
-            Ціна: ${{ product.price }}
-        </p>
-
-        <a class="btn"
-           href="{{ url_for('products.product_detail', product_id=product.id) }}">
-            Детальніше
-        </a>
-
+<section class="content-card">
+    <div class="products-heading">
+        <div>
+            <h2>Список товарів</h2>
+            <p>Перегляд та керування товарами.</p>
+        </div>
+        <a class="btn btn-gradient" href="{{ url_for('products.product_add') }}">Додати товар</a>
     </div>
-    {% endfor %}
 
-</div>
+    {% if products %}
+    <div class="products-grid">
+        {% for product in products %}
+        <article class="content-card product-card">
+            {% if product.image %}
+            <img class="product-image" src="{{ url_for('products.static', filename=product.image) }}" alt="{{ product.name }}">
+            {% else %}
+            <div class="product-image-placeholder">Зображення відсутнє</div>
+            {% endif %}
+            <h3>{{ product.name }}</h3>
+            <p>{{ category_names.get(product.category, product.category) }}</p>
+            <p class="product-price">Ціна: {{ "%.2f"|format(product.price|float) }}</p>
+            <p>Кількість: {{ product.quantity }}</p>
+            <p class="muted-text">Додано: {{ product.created_at }}</p>
+            <a class="btn" href="{{ url_for('products.product_detail', product_id=product.id) }}">Детальніше</a>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>Товарів поки немає. Додайте перший товар.</p>
+    {% endif %}
+</section>
 {% endblock %}

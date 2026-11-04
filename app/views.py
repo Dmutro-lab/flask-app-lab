@@ -1,5 +1,9 @@
 
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for, flash, current_app
+from logging.handlers import RotatingFileHandler
+import logging
+from pathlib import Path
+from app.forms import ContactForm
 from app import app
 
 profile = {
@@ -61,25 +65,37 @@ def index():
 
 
 @app.route("/contacts", methods=["GET", "POST"])
+@app.route("/contact", methods=["GET", "POST"])
 def contacts():
-    success = False
+    form = ContactForm()
+
+    if form.validate_on_submit():
+        try:
+            log_path = Path(current_app.root_path).parent / "logs" / "contact.log"
+            log_path.parent.mkdir(parents=True, exist_ok=True)
+            logger = logging.getLogger("contact_form")
+            if not logger.handlers:
+                handler = RotatingFileHandler(log_path, maxBytes=1024 * 1024, backupCount=3, encoding="utf-8")
+                handler.setFormatter(logging.Formatter("%(asctime)s | %(message)s"))
+                logger.addHandler(handler)
+                logger.setLevel(logging.INFO)
+            logger.info("name=%r | email=%r | subject=%r | message=%r", form.name.data, form.email.data, form.subject.data, form.message.data)
+            flash("Повідомлення успішно збережено.", "success")
+        except OSError:
+            current_app.logger.exception("Не вдалося записати контактне повідомлення")
+            flash("Не вдалося зберегти повідомлення. Спробуйте ще раз.", "danger")
+        return redirect(url_for("contacts"))
 
     if request.method == "POST":
-        name = request.form.get("name", "").strip()
-        email = request.form.get("email", "").strip()
-        message = request.form.get("message", "").strip()
-
-        if name and email and message:
-            success = True
+        flash("Форма містить помилки. Перевірте введені дані.", "danger")
 
     return render_template(
         "contacts.html",
         title="Контакти | Дмитро Івасюк",
         page="contacts",
         profile=profile,
-        success=success
+        form=form
     )
-
 
 @app.route("/homepage")
 def home():

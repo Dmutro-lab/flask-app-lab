@@ -937,3 +937,11 @@ html {
         grid-template-columns: 1fr;
     }
 }
+
+.field-errors { color: #dc3545; margin: 6px 0 0; padding-left: 20px; font-size: .9rem; }
+.form-group { margin-bottom: 1rem; }
+.products-heading, .product-actions { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.product-image, .product-image-preview { width: 100%; max-width: 320px; height: 190px; object-fit: contain; border-radius: 12px; margin-bottom: 1rem; }
+.product-detail-image { display: block; max-width: min(100%, 520px); max-height: 360px; object-fit: contain; margin: 1rem 0; }
+.product-image-placeholder { display: grid; place-items: center; width: 100%; min-height: 150px; border: 1px dashed #999; border-radius: 12px; color: #888; margin-bottom: 1rem; }
+.product-actions form { margin: 0; }

@@ -1,6 +1,8 @@
 
 {% extends "base.html" %}
 
+{% from "macros/forms.html" import render_field %}
+
 {% block content %}
 
 <section class="contact-section">
@@ -60,65 +62,29 @@
                         Заповни форму нижче.
                     </p>
 
-                    {% if success %}
-                    <div class="alert alert-success" role="status">
-                        Форму успішно перевірено!
-                        Це демонстраційна форма, тому повідомлення не надсилається.
-                    </div>
-                    {% endif %}
-
                     <form method="POST" action="{{ url_for('contacts') }}">
+                        {{ form.hidden_tag() }}
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="name" class="form-label">
-                                    Твоє ім'я
-                                </label>
-                                <input type="text"
-                                       class="form-control custom-input"
-                                       id="name"
-                                       name="name"
-                                       placeholder="Введи ім'я"
-                                       maxlength="100"
-                                       required>
+                                {{ render_field(form.name) }}
                             </div>
-
                             <div class="col-md-6">
-                                <label for="email" class="form-label">
-                                    Email
-                                </label>
-                                <input type="email"
-                                       class="form-control custom-input"
-                                       id="email"
-                                       name="email"
-                                       placeholder="example@gmail.com"
-                                       maxlength="254"
-                                       required>
+                                {{ render_field(form.email) }}
                             </div>
-
                             <div class="col-12">
-                                <label for="message" class="form-label">
-                                    Повідомлення
-                                </label>
-                                <textarea class="form-control custom-input"
-                                          id="message"
-                                          name="message"
-                                          rows="6"
-                                          placeholder="Напиши своє повідомлення..."
-                                          maxlength="3000"
-                                          required></textarea>
+                                {{ render_field(form.subject) }}
                             </div>
-
                             <div class="col-12">
-                                <button type="submit"
-                                        class="btn btn-gradient btn-lg w-100">
-                                    Надіслати повідомлення ↗
-                                </button>
+                                {{ render_field(form.message, rows=5, cols=40) }}
+                            </div>
+                            <div class="col-12">
+                                {{ form.submit(class="btn btn-gradient btn-lg w-100") }}
                             </div>
                         </div>
                     </form>
 
                     <p class="form-note">
-                        Демонстраційна форма без реального надсилання даних.
+                        Повідомлення зберігаються у журналі контактних звернень.
                     </p>
                 </div>
             </div>

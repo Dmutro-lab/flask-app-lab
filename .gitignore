@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.py[cod]
+logs/*.log
+app/products/static/uploads/*
+!app/products/static/uploads/.gitkeep
