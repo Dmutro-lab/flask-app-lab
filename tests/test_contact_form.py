@@ -1,18 +1,14 @@
 
 import unittest
 
-from app import app
+from app import create_app
 
 
 class ContactFormTestCase(unittest.TestCase):
 
     def setUp(self):
-        app.config.update(
-            TESTING=True,
-            WTF_CSRF_ENABLED=False
-        )
-
-        self.client = app.test_client()
+        self.app = create_app("testing")
+        self.client = self.app.test_client()
 
     def test_contact_page(self):
         response = self.client.get("/contact")

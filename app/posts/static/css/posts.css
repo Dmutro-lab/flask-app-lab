@@ -1,0 +1,23 @@
+.posts-page, .post-detail, .post-form-page { max-width: 1100px; margin: 2rem auto; }
+.posts-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+.posts-heading h1, .post-detail h1, .post-form-page h1 { font-weight: 750; color: #243247; }
+.eyebrow { color: #64748b; text-transform: uppercase; letter-spacing: .12em; font-size: .8rem; font-weight: 700; margin-bottom: .4rem; }
+.posts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.4rem; }
+.post-card { overflow: hidden; border: 1px solid #e2e8f0; border-radius: 16px; background: #fff; box-shadow: 0 8px 24px rgba(15, 23, 42, .06); }
+.post-image { width: 100%; height: 165px; object-fit: cover; background: #e8eef5; }
+.post-card-body { padding: 1.25rem; }
+.post-card h2 { font-size: 1.3rem; margin: .65rem 0; color: #1e293b; }
+.post-card p { color: #64748b; line-height: 1.6; }
+.post-category { display: inline-block; border-radius: 30px; padding: .3rem .7rem; background: #eaf1ff; color: #2455a4; font-size: .8rem; font-weight: 700; }
+.post-meta { color: #64748b; font-size: .9rem; margin-top: .8rem; }
+.post-detail { max-width: 850px; padding: 2rem; border: 1px solid #e2e8f0; border-radius: 16px; background: white; }
+.post-detail h1 { margin-top: 1rem; }
+.post-full-content { white-space: pre-wrap; line-height: 1.8; margin: 2rem 0; color: #334155; }
+.post-actions { display: flex; gap: .7rem; }
+.post-form-page { max-width: 760px; padding: 2rem; border: 1px solid #e2e8f0; border-radius: 16px; background: white; }
+.post-form { margin-top: 1.5rem; }
+.post-form .form-group { margin-bottom: 1rem; }
+.post-form .form-control { width: 100%; padding: .65rem; border: 1px solid #cbd5e1; border-radius: 8px; }
+.back-link { display: inline-block; margin-bottom: 1rem; color: #315c9b; text-decoration: none; }
+.empty-posts { padding: 3rem; text-align: center; color: #64748b; grid-column: 1 / -1; }
+@media (max-width: 600px) { .posts-heading { align-items: flex-start; flex-direction: column; } .post-detail, .post-form-page { padding: 1.2rem; } }

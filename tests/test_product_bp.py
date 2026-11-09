@@ -3,7 +3,7 @@ import os
 import tempfile
 import unittest
 
-from app import app
+from app import create_app
 from app.products.storage import get_products_table
 
 
@@ -12,18 +12,12 @@ class ProductBlueprintTestCase(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
 
-        app.config.update(
-            TESTING=True,
-            WTF_CSRF_ENABLED=False,
-            PRODUCTS_DB_PATH=os.path.join(
-                self.temp_dir.name, "products.json"
-            ),
-            PRODUCT_UPLOAD_FOLDER=os.path.join(
-                self.temp_dir.name, "uploads"
-            )
+        self.app = create_app("testing")
+        self.app.config.update(
+            PRODUCTS_DB_PATH=os.path.join(self.temp_dir.name, "products.json"),
+            PRODUCT_UPLOAD_FOLDER=os.path.join(self.temp_dir.name, "uploads")
         )
-
-        self.client = app.test_client()
+        self.client = self.app.test_client()
 
     def tearDown(self):
         self.temp_dir.cleanup()
@@ -57,7 +51,7 @@ class ProductBlueprintTestCase(unittest.TestCase):
         self.assertIn(b"450.50", response.data)
 
     def test_product_update_preserves_id_and_created_at(self):
-        with app.app_context():
+        with self.app.app_context():
             product_before = get_products_table().get(doc_id=1)
             created_at_before = product_before["created_at"]
 
@@ -76,7 +70,7 @@ class ProductBlueprintTestCase(unittest.TestCase):
         self.assertIn(b"Laptop Pro", response.data)
         self.assertIn(b"ID:</strong> 1", response.data)
 
-        with app.app_context():
+        with self.app.app_context():
             product_after = get_products_table().get(doc_id=1)
             created_at_after = product_after["created_at"]
 

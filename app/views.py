@@ -1,10 +1,12 @@
-
-from flask import render_template, request, redirect, url_for, flash, current_app
-from logging.handlers import RotatingFileHandler
-import logging
 from pathlib import Path
+import logging
+from logging.handlers import RotatingFileHandler
+
+from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
+
 from app.forms import ContactForm
-from app import app
+
+main_bp = Blueprint("main", __name__)
 
 profile = {
     "name": "Дмитро Івасюк",
@@ -12,63 +14,27 @@ profile = {
     "location": "Україна",
     "email": "dmytro.ivasiuk.24@pnu.edu.ua",
     "about": "Я студент третього курсу спеціальності «Інженерія програмного забезпечення». Цікавлюся веброзробкою, програмуванням та сучасними технологіями. Постійно вдосконалюю свої навички й працюю над навчальними проєктами.",
-    "education": {
-        "degree": "Інженерія програмного забезпечення",
-        "level": "Бакалаврат, 3 курс",
-        "period": "2024 — теперішній час"
-    },
-    "skills": [
-        "Веброзробка",
-        "Об'єктно-орієнтоване програмування",
-        "Робота з базами даних",
-        "Git та GitHub",
-        "Розробка REST API",
-        "Командна робота"
-    ],
-    "technologies": [
-        "Python", "Flask", "PHP", "HTML5",
-        "CSS3", "Bootstrap", "JavaScript",
-        "SQL", "Git", "GitHub"
-    ],
+    "education": {"degree": "Інженерія програмного забезпечення", "level": "Бакалаврат, 3 курс", "period": "2024 — теперішній час"},
+    "skills": ["Веброзробка", "Об'єктно-орієнтоване програмування", "Робота з базами даних", "Git та GitHub", "Розробка REST API", "Командна робота"],
+    "technologies": ["Python", "Flask", "PHP", "HTML5", "CSS3", "Bootstrap", "JavaScript", "SQL", "Git", "GitHub"],
     "projects": [
-        {
-            "number": "01",
-            "title": "Flask Web Application",
-            "description": "Навчальний вебзастосунок на Python та Flask із налаштованими маршрутами та розгортанням на Render.",
-            "tags": ["Python", "Flask", "Render"]
-        },
-        {
-            "number": "02",
-            "title": "PHP Laboratory Projects",
-            "description": "Серія навчальних вебпроєктів із використанням PHP, HTML, форм, обробки файлів та ООП.",
-            "tags": ["PHP", "HTML", "CSS"]
-        },
-        {
-            "number": "03",
-            "title": "Personal Portfolio",
-            "description": "Адаптивний сайт-портфоліо з використанням Flask, Jinja2, Bootstrap та власних стилів.",
-            "tags": ["Flask", "Jinja2", "Bootstrap"]
-        }
-    ]
+        {"number": "01", "title": "Flask Web Application", "description": "Навчальний вебзастосунок на Python та Flask із налаштованими маршрутами та розгортанням на Render.", "tags": ["Python", "Flask", "Render"]},
+        {"number": "02", "title": "PHP Laboratory Projects", "description": "Серія навчальних вебпроєктів із використанням PHP, HTML, форм, обробки файлів та ООП.", "tags": ["PHP", "HTML", "CSS"]},
+        {"number": "03", "title": "Personal Portfolio", "description": "Адаптивний сайт-портфоліо з використанням Flask, Jinja2, Bootstrap та власних стилів.", "tags": ["Flask", "Jinja2", "Bootstrap"]},
+    ],
 }
 
 
-@app.route("/")
-@app.route("/resume")
+@main_bp.route("/")
+@main_bp.route("/resume")
 def index():
-    return render_template(
-        "resume.html",
-        title="Резюме | Дмитро Івасюк",
-        page="resume",
-        profile=profile
-    )
+    return render_template("resume.html", title="Резюме | Дмитро Івасюк", page="resume", profile=profile)
 
 
-@app.route("/contacts", methods=["GET", "POST"])
-@app.route("/contact", methods=["GET", "POST"])
+@main_bp.route("/contacts", methods=["GET", "POST"])
+@main_bp.route("/contact", methods=["GET", "POST"])
 def contacts():
     form = ContactForm()
-
     if form.validate_on_submit():
         try:
             log_path = Path(current_app.root_path).parent / "logs" / "contact.log"
@@ -84,24 +50,12 @@ def contacts():
         except OSError:
             current_app.logger.exception("Не вдалося записати контактне повідомлення")
             flash("Не вдалося зберегти повідомлення. Спробуйте ще раз.", "danger")
-        return redirect(url_for("contacts"))
-
+        return redirect(url_for("main.contacts"))
     if request.method == "POST":
         flash("Форма містить помилки. Перевірте введені дані.", "danger")
+    return render_template("contacts.html", title="Контакти | Дмитро Івасюк", page="contacts", profile=profile, form=form)
 
-    return render_template(
-        "contacts.html",
-        title="Контакти | Дмитро Івасюк",
-        page="contacts",
-        profile=profile,
-        form=form
-    )
 
-@app.route("/homepage")
+@main_bp.route("/homepage")
 def home():
-    return render_template(
-        "homepage.html",
-        title="Головна | Дмитро Івасюк",
-        page="homepage",
-        profile=profile
-    )
+    return render_template("homepage.html", title="Головна | Дмитро Івасюк", page="homepage", profile=profile)

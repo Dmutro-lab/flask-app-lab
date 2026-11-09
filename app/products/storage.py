@@ -7,12 +7,15 @@ from flask import current_app
 def get_products_table():
     db_path = Path(current_app.config["PRODUCTS_DB_PATH"])
     db_path.parent.mkdir(parents=True, exist_ok=True)
+
     is_new_database = not db_path.exists()
+
     db = TinyDB(db_path, ensure_ascii=False)
     table = db.table("products")
 
     if is_new_database:
         created_at = datetime.now().astimezone().isoformat(timespec="seconds")
+
         initial_products = [
             {
                 "id": 1,
