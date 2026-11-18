@@ -1,12 +1,25 @@
+
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
+from sqlalchemy import MetaData
 
 from app.config import config
 
 
-db = SQLAlchemy()
+db = SQLAlchemy(
+    metadata=MetaData(
+        naming_convention={
+            "ix": "ix_%(column_0_label)s",
+            "uq": "uq_%(table_name)s_%(column_0_name)s",
+            "ck": "ck_%(table_name)s_%(constraint_name)s",
+            "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+            "pk": "pk_%(table_name)s"
+        }
+    )
+)
+
 migrate = Migrate()
 csrf = CSRFProtect()
 
@@ -24,6 +37,7 @@ def create_app(config_name="development"):
     from app.products import products_bp
     from app.posts import post_bp
     from app.posts.models import Post
+    from app.products.models import Product
 
     app.register_blueprint(main_bp)
     app.register_blueprint(users_bp, url_prefix="/users")
@@ -47,17 +61,33 @@ def create_app(config_name="development"):
         from flask import render_template
         from app.products.storage import get_products_table
         from app.products.views import CATEGORY_NAMES
-        products = sorted(get_products_table().all(), key=lambda item: item["id"])
-        return render_template("products/products.html", products=products, category_names=CATEGORY_NAMES)
+
+        products = sorted(
+            get_products_table().all(),
+            key=lambda item: item["id"]
+        )
+
+        return render_template(
+            "products/products.html",
+            products=products,
+            category_names=CATEGORY_NAMES
+        )
 
     @app.route("/products/<int:product_id>")
     def legacy_product_detail(product_id):
         from flask import abort, render_template
         from app.products.storage import get_products_table
         from app.products.views import CATEGORY_NAMES
+
         product = get_products_table().get(doc_id=product_id)
+
         if product is None:
             abort(404)
-        return render_template("products/detail_product.html", product=product, category_names=CATEGORY_NAMES)
+
+        return render_template(
+            "products/detail_product.html",
+            product=product,
+            category_names=CATEGORY_NAMES
+        )
 
     return app
