@@ -3,11 +3,16 @@ from flask import (
     render_template, request, redirect,
     url_for, session, flash, make_response
 )
+from flask_login import (
+    login_user, logout_user, login_required, current_user
+)
 
+from app import db, bcrypt
 from app.users import users_bp
+from app.users.models import User
+from app.users.forms import RegistrationForm
 
 
-# Лабораторна №3
 @users_bp.route("/hi/<name>")
 def greetings(name):
     age = request.args.get("age", type=int)
@@ -30,34 +35,88 @@ def admin():
     )
 
 
-# Завдання 1. Авторизація
+# Лабораторна №9. Реєстрація користувачів
+@users_bp.route("/register", methods=["GET", "POST"])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for("users.account"))
+
+    form = RegistrationForm()
+
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(
+            form.password.data
+        ).decode("utf-8")
+
+        user = User(
+            username=form.username.data,
+            email=form.email.data,
+            password=hashed_password
+        )
+
+        db.session.add(user)
+        db.session.commit()
+
+        login_user(user)
+
+        flash("Реєстрацію успішно завершено!", "success")
+        return redirect(url_for("users.account"))
+
+    return render_template("users/register.html", form=form)
+
+
+# Лабораторна №9. Вхід користувачів
 @users_bp.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+    if current_user.is_authenticated:
+        return redirect(url_for("users.account"))
 
-        if username == "admin" and password == "12345":
-            session["username"] = username
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+
+        user = User.query.filter_by(username=username).first()
+
+        if user and bcrypt.check_password_hash(user.password, password):
+            login_user(user)
 
             flash("Вхід виконано успішно!", "success")
-            return redirect(url_for("users.profile"))
+            return redirect(url_for("users.account"))
 
-        flash("Неправильний логін або пароль!", "danger")
+        flash("Неправильне ім'я користувача або пароль!", "danger")
         return redirect(url_for("users.login"))
 
     return render_template("users/login.html")
 
 
+# Лабораторна №9. Сторінка облікового запису
+@users_bp.route("/account")
+@login_required
+def account():
+    return render_template(
+        "users/account.html",
+        user=current_user
+    )
+
+
+# Лабораторна №9. Список усіх користувачів
+@users_bp.route("/all-users")
+@login_required
+def all_users():
+    users = User.query.order_by(User.id).all()
+    users_count = User.query.count()
+
+    return render_template(
+        "users/all_users.html",
+        users=users,
+        users_count=users_count
+    )
+
+
+# Лабораторна №9. Профіль користувача
 @users_bp.route("/profile")
+@login_required
 def profile():
-    if "username" not in session:
-        flash("Спочатку увійдіть у систему!", "danger")
-        return redirect(url_for("users.login"))
-
-    username = session["username"]
-
-
     cookies = request.cookies
 
     theme = request.cookies.get("theme", "light")
@@ -67,28 +126,26 @@ def profile():
 
     return render_template(
         "users/profile.html",
-        username=username,
+        username=current_user.username,
         cookies=cookies,
         theme=theme
     )
 
 
-# Завдання 1. Вихід
+# Лабораторна №9. Вихід із системи
 @users_bp.route("/logout", methods=["POST"])
+@login_required
 def logout():
-    session.pop("username", None)
+    logout_user()
 
     flash("Ви успішно вийшли із системи!", "success")
     return redirect(url_for("users.login"))
 
 
-# Завдання 2. Додавання cookie
+# Додавання cookie
 @users_bp.route("/add-cookie", methods=["POST"])
+@login_required
 def add_cookie():
-    if "username" not in session:
-        flash("Спочатку увійдіть у систему!", "danger")
-        return redirect(url_for("users.login"))
-
     key = request.form.get("key", "").strip()
     value = request.form.get("value", "")
     max_age = request.form.get("max_age", type=int)
@@ -114,13 +171,10 @@ def add_cookie():
     return response
 
 
-# Завдання 2. Видалення cookie за ключем
+# Видалення cookie за ключем
 @users_bp.route("/delete-cookie", methods=["POST"])
+@login_required
 def delete_cookie():
-    if "username" not in session:
-        flash("Спочатку увійдіть у систему!", "danger")
-        return redirect(url_for("users.login"))
-
     key = request.form.get("key", "").strip()
 
     if not key:
@@ -132,22 +186,17 @@ def delete_cookie():
         return redirect(url_for("users.profile"))
 
     response = make_response(redirect(url_for("users.profile")))
-
     response.delete_cookie(key, path="/")
 
     flash(f"Cookie '{key}' видалено!", "success")
     return response
 
 
-# Завдання 2. Видалення всіх cookies
+# Видалення всіх cookies
 @users_bp.route("/delete-all-cookies", methods=["POST"])
+@login_required
 def delete_all_cookies():
-    if "username" not in session:
-        flash("Спочатку увійдіть у систему!", "danger")
-        return redirect(url_for("users.login"))
-
     response = make_response(redirect(url_for("users.profile")))
-
 
     for key in request.cookies:
         if key != "session":
@@ -157,20 +206,16 @@ def delete_all_cookies():
     return response
 
 
-# Завдання 3. Зміна кольорової схеми
+# Зміна кольорової схеми
 @users_bp.route("/change-theme/<theme>", methods=["POST"])
+@login_required
 def change_theme(theme):
-    if "username" not in session:
-        flash("Спочатку увійдіть у систему!", "danger")
-        return redirect(url_for("users.login"))
-
     if theme not in ("light", "dark"):
         flash("Невідома кольорова схема!", "danger")
         return redirect(url_for("users.profile"))
 
     response = make_response(redirect(url_for("users.profile")))
 
-    # Зберігаємо тему на 30 днів
     response.set_cookie(
         "theme",
         theme,

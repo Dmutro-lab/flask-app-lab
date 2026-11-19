@@ -1,7 +1,7 @@
 
 {% extends "base.html" %}
 
-{% block title %}Профіль — Lab 4{% endblock %}
+{% block title %}Профіль користувача{% endblock %}
 
 {% block content %}
 
@@ -11,14 +11,13 @@
 
     <p>Ви успішно авторизувалися та увійшли в систему.</p>
 
-    <!-- Вихід із системи -->
     <form method="POST" action="{{ url_for('users.logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit" class="btn btn-danger">Вийти</button>
     </form>
 
     <hr>
 
-    <!-- Завдання 3. Кольорова схема -->
     <h3>Вибір кольорової схеми</h3>
 
     <p>Поточна тема:
@@ -34,6 +33,7 @@
     <div class="theme-buttons">
         <form method="POST"
               action="{{ url_for('users.change_theme', theme='light') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="btn btn-light">
                 Світла тема
             </button>
@@ -41,6 +41,7 @@
 
         <form method="POST"
               action="{{ url_for('users.change_theme', theme='dark') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="btn btn-dark">
                 Темна тема
             </button>
@@ -49,10 +50,10 @@
 
     <hr>
 
-    <!-- Завдання 2. Додавання cookie -->
     <h3>Додати cookie</h3>
 
     <form method="POST" action="{{ url_for('users.add_cookie') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <div class="cookie-form">
 
@@ -86,15 +87,14 @@
         <button type="submit" class="btn btn-success">
             Додати cookie
         </button>
-
     </form>
 
     <hr>
 
-    <!-- Видалення cookie за ключем -->
     <h3>Видалити cookie за ключем</h3>
 
     <form method="POST" action="{{ url_for('users.delete_cookie') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <div class="form-group">
             <label for="delete-key">Ключ cookie для видалення</label>
@@ -107,26 +107,23 @@
         <button type="submit" class="btn btn-warning">
             Видалити cookie
         </button>
-
     </form>
 
     <hr>
 
-    <!-- Видалення всіх cookies -->
     <h3>Видалити всі cookies</h3>
 
     <form method="POST"
           action="{{ url_for('users.delete_all_cookies') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <button type="submit" class="btn btn-danger">
             Видалити всі cookies
         </button>
-
     </form>
 
     <hr>
 
-    <!-- Таблиця поточних cookies -->
     <h3>Список поточних cookies</h3>
 
     <table class="cookies-table">

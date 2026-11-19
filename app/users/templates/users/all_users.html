@@ -1,0 +1,59 @@
+
+{% extends "base.html" %}
+
+{% block title %}Усі користувачі{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4 mb-5">
+
+    <h2 class="text-center mb-4">Усі зареєстровані користувачі</h2>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h5 class="mb-3">
+                Загальна кількість користувачів: {{ users_count }}
+            </h5>
+
+            {% if users %}
+
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ім'я користувача</th>
+                            <th>Електронна пошта</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.email }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% else %}
+
+                <div class="alert alert-info">
+                    Зареєстрованих користувачів поки немає.
+                </div>
+
+            {% endif %}
+
+            <a href="{{ url_for('users.account') }}"
+               class="btn btn-primary mt-3">
+                Повернутися до облікового запису
+            </a>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

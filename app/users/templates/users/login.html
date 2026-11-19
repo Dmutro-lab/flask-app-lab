@@ -1,36 +1,51 @@
 
 {% extends "base.html" %}
 
-{% block title %}Login — Lab 4{% endblock %}
+{% block title %}Вхід у систему{% endblock %}
 
 {% block content %}
 
-<h2>Вхід у систему</h2>
+<div class="container mt-4 mb-5" style="max-width: 600px;">
 
-<form method="POST" action="{{ url_for('users.login') }}">
+    <h2 class="mb-4 text-center">Вхід у систему</h2>
 
-    <div class="form-group">
-        <label for="username">Ім'я користувача</label>
-        <input
-            type="text"
-            id="username"
-            name="username"
-            required
-        >
-    </div>
+    <form method="POST" action="{{ url_for('users.login') }}">
 
-    <div class="form-group">
-        <label for="password">Пароль</label>
-        <input
-            type="password"
-            id="password"
-            name="password"
-            required
-        >
-    </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-    <button type="submit">Увійти</button>
+        <div class="mb-3">
+            <label for="username" class="form-label">Ім'я користувача</label>
+            <input
+                type="text"
+                class="form-control"
+                id="username"
+                name="username"
+                required
+            >
+        </div>
 
-</form>
+        <div class="mb-3">
+            <label for="password" class="form-label">Пароль</label>
+            <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                required
+            >
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">
+            Увійти
+        </button>
+
+    </form>
+
+    <p class="text-center mt-3">
+        Ще не маєте облікового запису?
+        <a href="{{ url_for('users.register') }}">Зареєструватися</a>
+    </p>
+
+</div>
 
 {% endblock %}
