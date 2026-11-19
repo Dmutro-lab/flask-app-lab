@@ -21,3 +21,5 @@
 .back-link { display: inline-block; margin-bottom: 1rem; color: #315c9b; text-decoration: none; }
 .empty-posts { padding: 3rem; text-align: center; color: #64748b; grid-column: 1 / -1; }
 @media (max-width: 600px) { .posts-heading { align-items: flex-start; flex-direction: column; } .post-detail, .post-form-page { padding: 1.2rem; } }
+
+.post-tag { display: inline-block; margin: 0.2rem 0.25rem 0.2rem 0; padding: 0.25rem 0.65rem; border-radius: 999px; background: #f1e5d8; color: #68452e; font-size: 0.85rem; }

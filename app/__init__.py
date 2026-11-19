@@ -27,7 +27,7 @@ csrf = CSRFProtect()
 def create_app(config_name="development"):
     app = Flask(__name__)
     app.config.from_object(config.get(config_name, config["development"]))
-
+    app.config["SQLALCHEMY_ECHO"] = True
     db.init_app(app)
     migrate.init_app(app, db)
     csrf.init_app(app)
@@ -36,7 +36,8 @@ def create_app(config_name="development"):
     from app.users import users_bp
     from app.products import products_bp
     from app.posts import post_bp
-    from app.posts.models import Post
+    from app.posts.models import Post, Tag
+    from app.users.models import User
     from app.products.models import Product
 
     app.register_blueprint(main_bp)

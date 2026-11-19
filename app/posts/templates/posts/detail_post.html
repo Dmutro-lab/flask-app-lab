@@ -6,8 +6,15 @@
     <a href="{{ url_for('posts.all_posts') }}" class="back-link">← Усі пости</a>
     <span class="post-category">{{ category_names[post.category.value] }}</span>
     <h1>{{ post.title }}</h1>
-    <div class="post-meta">{{ post.posted.strftime('%d.%m.%Y %H:%M') }} · Автор: {{ post.author }}</div>
+    <div class="post-meta">{{ post.posted.strftime('%d.%m.%Y %H:%M') }} · Автор: {{ post.user.username if post.user else 'Не призначено' }}</div>
     <div class="post-full-content">{{ post.content }}</div>
+    <p><strong>Теги:</strong>
+        {% for tag in post.tags %}
+            <span class="post-tag">{{ tag.name }}</span>
+        {% else %}
+            <span>Немає тегів</span>
+        {% endfor %}
+    </p>
     <div class="post-actions">
         <a class="btn btn-primary" href="{{ url_for('posts.update_post', post_id=post.id) }}">Edit</a>
         <a class="btn btn-outline-danger" href="{{ url_for('posts.delete_post', post_id=post.id) }}">Delete</a>

@@ -15,7 +15,7 @@
                 <span class="post-category">{{ category_names[post.category.value] }}</span>
                 <h2>{{ post.title }}</h2>
                 <p>{{ post.content[:100] }}{% if post.content|length > 100 %}…{% endif %}</p>
-                <div class="post-meta">{{ post.posted.strftime('%d.%m.%Y %H:%M') }} · {{ post.author }}</div>
+                <div class="post-meta">{{ post.posted.strftime('%d.%m.%Y %H:%M') }} · {{ post.user.username if post.user else 'Не призначено' }}</div>
                 <a class="btn btn-outline-primary mt-3" href="{{ url_for('posts.detail_post', post_id=post.id) }}">Переглянути пост</a>
             </div>
         </article>
